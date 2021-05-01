@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "bannerjs": "1.0.7",
-    "csso-cli": "2.0.2",
+    "csso-cli": "3.0.0",
     "less": "3.13.1"
   },
   "license": "MIT"
