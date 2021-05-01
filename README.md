@@ -19,8 +19,12 @@ import '@uiw/reset.css/reset.less';
 
 ### CDN
 
-See https://unpkg.com/@uiw/reset.css/reset.min.css  
-See https://unpkg.com/@uiw/reset.css/reset.css  
+- See https://unpkg.com/@uiw/reset.css/reset.css
+- See https://unpkg.com/@uiw/reset.css/reset.min.css
+- See https://unpkg.com/@uiw/reset.css/reset.less
+- See https://uiwjs.github.io/reset-css/reset.css
+- See https://uiwjs.github.io/reset-css/reset.min.css
+- See https://uiwjs.github.io/reset-css/reset.less
 
 ### License
 
