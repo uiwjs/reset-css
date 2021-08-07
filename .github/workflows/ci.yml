@@ -8,12 +8,10 @@ jobs:
   build-deploy:
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@master
-
-    - name: Setup Node
-      uses: actions/setup-node@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
       with:
-        node-version: '10.x'
+        node-version: 14
 
     - run: npm install
     - run: npm run compile
@@ -31,7 +29,9 @@ jobs:
           <meta name="description" content="A tiny modern CSS reset.">
           <link rel="stylesheet" type="text/css" href="reset.min.css" />
         </head>
-        <body>
+        <body style="text-align: center;">
+          <h1 style="font-size: 46px; padding: 50px 0 0 0; font-weight: bold;">reset.css</h1>
+          <p style="padding-bottom: 30px;color: #a5a5a5;">A tiny modern CSS reset.</p>
           <div>
             <a href="./reset.css">reset.css</a>
           </div>
