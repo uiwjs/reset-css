@@ -2,7 +2,7 @@
  * @uiw/reset.css v1.0.4
  * A tiny modern CSS reset.
  * 
- * Copyright (c) 2020 
+ * Copyright (c) 2021 
  * 
  * 
  * Licensed under the MIT license.
@@ -75,7 +75,6 @@ html {
   box-sizing: inherit;
 }
 /* Media */
-img,
 embed,
 iframe,
 object,
