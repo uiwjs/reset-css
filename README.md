@@ -1,6 +1,8 @@
 reset.css
 ---
 
+[![](https://img.shields.io/npm/v/@uiw/reset.css.svg)](https://www.npmjs.com/@uiw/reset.css)
+
 A tiny modern CSS reset.
 
 ### npm
