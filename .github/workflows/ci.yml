@@ -46,6 +46,10 @@ jobs:
         </body></html>
         EOF
 
+    - run: git status
+    - run: npm install @jsdevtools/npm-publish -g
+    - run: npm-publish --token="${{ secrets.NPM_TOKEN }}" ./package.json
+
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
