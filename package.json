@@ -22,7 +22,7 @@
     "compile:min": "lessc reset.less | bannerjs -o | csso > reset.min.css"
   },
   "devDependencies": {
-    "bannerjs": "1.0.7",
+    "bannerjs": "2.0.0",
     "csso-cli": "3.0.0",
     "less": "4.1.1"
   },
