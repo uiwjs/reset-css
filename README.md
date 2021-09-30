@@ -1,7 +1,9 @@
 reset.css
 ---
 
-[![](https://img.shields.io/npm/v/@uiw/reset.css.svg)](https://www.npmjs.com/@uiw/reset.css)
+[![NPM Version](https://img.shields.io/npm/v/@uiw/reset.css.svg)](https://www.npmjs.com/@uiw/reset.css)
+[![Build & Deploy](https://github.com/uiwjs/reset-css/actions/workflows/ci.yml/badge.svg)](https://github.com/uiwjs/reset-css/actions/workflows/ci.yml)
+[![NPM Downloads](https://img.shields.io/npm/dm/@uiw/reset.css.svg?style=flat)](https://www.npmjs.com/package/@uiw/reset.css)
 
 A tiny modern CSS reset.
 
