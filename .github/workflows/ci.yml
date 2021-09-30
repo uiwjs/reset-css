@@ -19,6 +19,9 @@ jobs:
     - run: mkdir -p build
     - run: cp -r reset.* ./build
 
+    - run: npm i markdown-to-html-cli -g
+    - run: markdown-to-html --output build/index.html --favicon 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💅</text></svg>'
+
     - name: Create Index.html
       working-directory: build
       run: |
@@ -45,6 +48,41 @@ jobs:
           </div>
         </body></html>
         EOF
+
+    - name: Create Tag
+      id: create_tag
+      uses: jaywcjlove/create-tag-action@v1.2.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        package-path: ./package.json
+
+    - name: Generate Changelog
+      id: changelog
+      uses: jaywcjlove/changelog-generator@v1.4.6
+      if: steps.create_tag.outputs.successful
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        head-ref: ${{steps.create_tag.outputs.version}}
+        filter-author: (小弟调调™|Renovate Bot)
+        filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      if: steps.create_tag.outputs.successful
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        name: ${{ steps.create_tag.outputs.version }}
+        tag: ${{ steps.create_tag.outputs.version }}
+        body: |
+          [![](https://img.shields.io/badge/Open%20in-unpkg-blue)](https://uiwjs.github.io/npm-unpkg/#/pkg/compile-less-cli@${{steps.create_tag.outputs.versionNumber}}/file/README.md) [![](https://img.shields.io/github/issues/jaywcjlove/compile-less.svg)](https://github.com/jaywcjlove/compile-less/releases) [![](https://img.shields.io/github/forks/jaywcjlove/compile-less.svg)](https://github.com/jaywcjlove/compile-less/network) [![](https://img.shields.io/github/stars/jaywcjlove/compile-less.svg)](https://github.com/jaywcjlove/svgtofont/stargazers) [![](https://img.shields.io/github/release/jaywcjlove/compile-less.svg)](https://github.com/jaywcjlove/compile-less/releases)
+
+          ```bash
+          npm i compile-less-cli@${{steps.create_tag.outputs.versionNumber}}
+          ```
+          
+          ${{ steps.changelog.outputs.compareurl }}
+          
+          ${{ steps.changelog.outputs.changelog }}
 
     - run: git status
     - run: npm install @jsdevtools/npm-publish -g
