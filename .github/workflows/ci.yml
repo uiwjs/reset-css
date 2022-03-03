@@ -54,16 +54,26 @@ jobs:
         </body></html>
         EOF
 
-    - name: Create Tag
+    - name: Is a tag created auto?
       id: create_tag
-      uses: jaywcjlove/create-tag-action@v1.2.1
+      uses: jaywcjlove/create-tag-action@v1.3.6
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
         package-path: ./package.json
+
+    - name: get tag version
+      id: tag_version
+      uses: jaywcjlove/changelog-generator@v1.5.0
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        commit_message: ${{steps.tag_version.outputs.tag}} ${{ github.event.head_commit.message }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build
 
     - name: Generate Changelog
       id: changelog
-      uses: jaywcjlove/changelog-generator@v1.4.6
+      uses: jaywcjlove/changelog-generator@v1.5.0
       if: steps.create_tag.outputs.successful
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -81,20 +91,19 @@ jobs:
         body: |
           [![](https://img.shields.io/badge/Open%20in-unpkg-blue)](https://uiwjs.github.io/npm-unpkg/#/pkg/@uiw/reset.css@${{steps.create_tag.outputs.versionNumber}}/file/README.md)
 
+          Documentation ${{ steps.changelog.outputs.tag }}: https://raw.githack.com/uiwjs/reset-css/${{ steps.changelog.outputs.gh-pages-short-hash }}/index.html  
+          Comparing Changes: ${{ steps.changelog.outputs.compareurl }}  
+
           ```bash
           npm i @uiw/reset.css@${{steps.create_tag.outputs.versionNumber}}
           ```
-          
-          ${{ steps.changelog.outputs.compareurl }}
-          
+
           ${{ steps.changelog.outputs.changelog }}
 
     - run: git status
-    - run: npm install @jsdevtools/npm-publish -g
-    - run: npm-publish --token="${{ secrets.NPM_TOKEN }}" ./package.json
 
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
+    - name: 📦 @uiw/reset.css publish to NPM
+      uses: JS-DevTools/npm-publish@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+        token: ${{ secrets.NPM_TOKEN }}
+        package: ./package.json
