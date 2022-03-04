@@ -18,7 +18,7 @@ jobs:
           scope: '@uiwjs'
 
       - run: |
-          node -e 'var pkg = require("./package.json"); pkg.version="@uiwjs/reset-css"; pkg.publishConfig = { "registry": "https://npm.pkg.github.com/" }; require("fs").writeFileSync("./package.json", JSON.stringify(pkg, null, 2))'
+          node -e 'var pkg = require("./package.json"); pkg.name="@uiwjs/reset-css"; pkg.publishConfig = { "registry": "https://npm.pkg.github.com/" }; require("fs").writeFileSync("./package.json", JSON.stringify(pkg, null, 2))'
 
       - run: npm install
       - run: ls -al
