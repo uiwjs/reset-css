@@ -20,7 +20,6 @@ jobs:
       - run: node -e 'var pkg = require("./package.json"); pkg.version="@uiwjs/reset.css"; require("fs").writeFileSync("./package.json", JSON.stringify(pkg, null, 2))'
       - run: npm install
       - run: ls -al
-      - run: cat ~/.npmrc
       - run: cat ./package.json
       - run: npm run compile
       - run: npm run compile:min
