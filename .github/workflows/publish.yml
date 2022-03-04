@@ -16,7 +16,10 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@uiwjs'
+
+      - run: node -e 'var pkg = require("./package.json"); pkg.version='@uiwjs/reset.css'; require("fs").writeFileSync("./package.json", JSON.stringify(pkg, null, 2))'
       - run: npm install
+      - run: ls -al
       - run: npm run compile
       - run: npm run compile:min
       - run: npm publish
