@@ -14,7 +14,10 @@
     "reset",
     "mini"
   ],
-  "repository": "https://github.com/uiwjs/reset-css",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/octocat/my-other-repo.git"
+  },
   "scripts": {
     "start": "npm run compile && npm run compile:min",
     "prepare": "npm run start",
