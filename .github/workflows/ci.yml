@@ -6,104 +6,113 @@ on:
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: 14
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
 
-    - run: npm install
-    - run: npm run compile
-    - run: npm run compile:min
-    - run: mkdir -p build
-    - run: cp -r reset.* ./build
 
-    - run: npm i markdown-to-html-cli -g
-    - run: markdown-to-html --output build/doc.html --favicon 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💅</text></svg>'
+      - run: npm install
+      - run: npm run compile
+      - run: npm run compile:min
+      - run: mkdir -p build
+      - run: cp -r reset.* ./build
 
-    - name: Create Index.html
-      working-directory: build
-      run: |
-        cat > index.html << EOF
-        <!DOCTYPE html><html lang="en">
-        <head>
-          <title>reset-css</title>
-          <meta name="description" content="A tiny modern CSS reset.">
-          <link rel="stylesheet" type="text/css" href="reset.min.css" />
-          <style>
-            .docbtn { background: #2196f3; display: inline-block; padding: 5px 12px; color: #fff; border-radius: 2px; transition: all 0.3s; position: fixed; left: 10px; top: 10px; }
-            .docbtn:hover { background: #377eb7; color: #fff; }
-          </style>
-        </head>
-        <body style="text-align: center;">
-          <a target="__blank" class="docbtn" href="doc.html">Document</a>
-          <a href="https://github.com/uiwjs/reset-css" target="__blank">
-            <h1 style="font-size: 46px; padding: 50px 0 0 0; font-weight: bold;">reset.css</h1>
-          </a>
-          <p style="padding-bottom: 30px;color: #a5a5a5;">A tiny modern CSS reset.</p>
-          <div>
-            <a href="./reset.css">reset.css</a>
-          </div>
-          <div>
-            <a href="./reset.less">reset.less</a>
-          </div>
-          <div>
-            <a href="./reset.min.css">reset.min.css</a>
-          </div>
-        </body></html>
-        EOF
+      - run: npm i markdown-to-html-cli -g
+      - run: markdown-to-html --output build/doc.html --favicon 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💅</text></svg>'
 
-    - name: Is a tag created auto?
-      id: create_tag
-      uses: jaywcjlove/create-tag-action@v1.3.6
-      with:
-        package-path: ./package.json
+      - name: Create Index.html
+        working-directory: build
+        run: |
+          cat > index.html << EOF
+          <!DOCTYPE html><html lang="en">
+          <head>
+            <title>reset-css</title>
+            <meta name="description" content="A tiny modern CSS reset.">
+            <link rel="stylesheet" type="text/css" href="reset.min.css" />
+            <style>
+              .docbtn { background: #2196f3; display: inline-block; padding: 5px 12px; color: #fff; border-radius: 2px; transition: all 0.3s; position: fixed; left: 10px; top: 10px; }
+              .docbtn:hover { background: #377eb7; color: #fff; }
+            </style>
+          </head>
+          <body style="text-align: center;">
+            <a target="__blank" class="docbtn" href="doc.html">Document</a>
+            <a href="https://github.com/uiwjs/reset-css" target="__blank">
+              <h1 style="font-size: 46px; padding: 50px 0 0 0; font-weight: bold;">reset.css</h1>
+            </a>
+            <p style="padding-bottom: 30px;color: #a5a5a5;">A tiny modern CSS reset.</p>
+            <div>
+              <a href="./reset.css">reset.css</a>
+            </div>
+            <div>
+              <a href="./reset.less">reset.less</a>
+            </div>
+            <div>
+              <a href="./reset.min.css">reset.min.css</a>
+            </div>
+          </body></html>
+          EOF
 
-    - name: get tag version
-      id: tag_version
-      uses: jaywcjlove/changelog-generator@v1.5.0
+      - name: Is a tag created auto?
+        id: create_tag
+        uses: jaywcjlove/create-tag-action@main
+        with:
+          package-path: ./package.json
 
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        commit_message: ${{steps.tag_version.outputs.tag}} ${{ github.event.head_commit.message }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+      - name: get tag version
+        id: tag_version
+        uses: jaywcjlove/changelog-generator@main
 
-    - name: Generate Changelog
-      id: changelog
-      uses: jaywcjlove/changelog-generator@v1.5.0
-      if: steps.create_tag.outputs.successful
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        head-ref: ${{steps.create_tag.outputs.version}}
-        filter-author: (小弟调调™|Renovate Bot)
-        filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          commit_message: ${{steps.tag_version.outputs.tag}} ${{ github.event.head_commit.message }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
 
-    - name: Create Release
-      uses: ncipollo/release-action@v1
-      if: steps.create_tag.outputs.successful
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        name: ${{ steps.create_tag.outputs.version }}
-        tag: ${{ steps.create_tag.outputs.version }}
-        body: |
-          [![](https://img.shields.io/badge/Open%20in-unpkg-blue)](https://uiwjs.github.io/npm-unpkg/#/pkg/@uiw/reset.css@${{steps.create_tag.outputs.versionNumber}}/file/README.md)
+      - name: Generate Changelog
+        id: changelog
+        uses: jaywcjlove/changelog-generator@main
+        if: steps.create_tag.outputs.successful
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          head-ref: ${{steps.create_tag.outputs.version}}
+          filter-author: (小弟调调™|Renovate Bot)
+          filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
 
-          Documentation ${{ steps.changelog.outputs.tag }}: https://raw.githack.com/uiwjs/reset-css/${{ steps.changelog.outputs.gh-pages-short-hash }}/index.html  
-          Comparing Changes: ${{ steps.changelog.outputs.compareurl }}  
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        if: steps.create_tag.outputs.successful
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ steps.create_tag.outputs.version }}
+          tag: ${{ steps.create_tag.outputs.version }}
+          body: |
+            [![](https://img.shields.io/badge/Open%20in-unpkg-blue)](https://uiwjs.github.io/npm-unpkg/#/pkg/@uiw/reset.css@${{steps.create_tag.outputs.versionNumber}}/file/README.md)
 
-          ```bash
-          npm i @uiw/reset.css@${{steps.create_tag.outputs.versionNumber}}
-          ```
+            Documentation ${{ steps.changelog.outputs.tag }}: https://raw.githack.com/uiwjs/reset-css/${{ steps.changelog.outputs.gh-pages-short-hash }}/index.html  
+            Comparing Changes: ${{ steps.changelog.outputs.compareurl }}  
 
-          ${{ steps.changelog.outputs.changelog }}
+            ```bash
+            npm i @uiw/reset.css@${{steps.create_tag.outputs.versionNumber}}
+            ```
 
-    - run: git status
+            ${{ steps.changelog.outputs.changelog }}
 
-    - name: 📦 @uiw/reset.css publish to NPM
-      uses: JS-DevTools/npm-publish@v1
-      with:
-        token: ${{ secrets.NPM_TOKEN }}
-        package: ./package.json
+      - run: git status
+
+
+      - run: npm publish
+        name: 📦 @uiw/reset.css publish to NPM
+        continue-on-error: true
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      # - name: 📦 @uiw/reset.css publish to NPM
+      #   uses: JS-DevTools/npm-publish@v1
+      #   with:
+      #     token: ${{ secrets.NPM_TOKEN }}
+      #     package: ./package.json

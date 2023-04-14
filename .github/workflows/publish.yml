@@ -10,10 +10,10 @@ jobs:
       contents: read
       packages: write 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: 16
           registry-url: 'https://npm.pkg.github.com'
           scope: '@uiwjs'
 
@@ -30,19 +30,26 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   npm-publish:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
 
       - run: npm install
       - run: npm run compile
       - run: npm run compile:min
 
-      - name: 📦 @uiw/reset.css publish to NPM
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          package: ./package.json
+      - run: npm publish
+        name: 📦 @uiw/reset.css publish to NPM
+        continue-on-error: true
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      # - name: 📦 @uiw/reset.css publish to NPM
+      #   uses: JS-DevTools/npm-publish@v1
+      #   with:
+      #     token: ${{ secrets.NPM_TOKEN }}
+      #     package: ./package.json
