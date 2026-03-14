@@ -10,11 +10,11 @@ jobs:
       contents: read
       packages: write 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16
-          registry-url: 'https://npm.pkg.github.com'
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
           scope: '@uiwjs'
 
       - run: |
@@ -42,11 +42,9 @@ jobs:
       - run: npm run compile
       - run: npm run compile:min
 
-      - run: npm publish
+      - run: NODE_AUTH_TOKEN="" npm publish --access public --provenance
         name: 📦 @uiw/reset.css publish to NPM
         continue-on-error: true
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       # - name: 📦 @uiw/reset.css publish to NPM
       #   uses: JS-DevTools/npm-publish@v1
